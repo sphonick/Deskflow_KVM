@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Deskflow
+Comment=Keyboard/mouse sharing with the Mac (server)
+Exec=flatpak run org.deskflow.deskflow
+Icon=org.deskflow.deskflow
+X-GNOME-Autostart-enabled=true
+X-GNOME-Autostart-Delay=5

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Forced command for the Mac's restricted SSH key: only allows switching the panel input.
+case "$SSH_ORIGINAL_COMMAND" in
+  native|hdmi) exec "$HOME/.local/bin/toggle-input" "$SSH_ORIGINAL_COMMAND" ;;
+  *) echo "denied" >&2; exit 1 ;;
+esac

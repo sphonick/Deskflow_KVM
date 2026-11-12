@@ -1,0 +1,15 @@
+; Relevant keys in ~/Library/Deskflow/Deskflow.conf on the Mac (client).
+; Edit with Deskflow quit. Use full paths (no ~). Other keys: leave as Deskflow wrote them.
+[client]
+remoteHost=linux-host.local
+
+[core]
+coreMode=1
+enableEnterCommand=true
+enterCommand=/Users/MAC-USER/bin/deskflow-screen hdmi
+enableExitCommand=true
+exitCommand=/Users/MAC-USER/bin/deskflow-screen native
+
+[gui]
+autoHide=true
+startCoreWithGui=true

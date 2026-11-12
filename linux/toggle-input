@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Switch the Linux machine's built-in/attached panel between its native input (Linux)
+# and HDMI (Mac) using DDC/CI (ddcutil).
+# Usage: toggle-input [native|hdmi]   (no arg = toggle)
+#
+# ---- CONFIG: find these with `ddcutil detect` and `ddcutil --bus N capabilities` (VCP 60) ----
+BUS=4                      # I2C bus of the panel
+NATIVE=03                  # VCP 0x60 value for the Linux/native input
+HDMI=11                    # VCP 0x60 value for the HDMI input the Mac uses
+MAC=mac-mini.local         # Mac's mDNS name (SSH key login from Linux must work)
+# ---------------------------------------------------------------------------------------------
+#
+# NOTES (learned the hard way on an HP Envy 34 AIO):
+#  - HDMI -> native takes ~8s, and re-sending the command restarts that delay,
+#    so we send exactly ONE set and lock out repeats.
+#  - After switching to HDMI the panel stays black until the HDMI link retrains, so we
+#    cycle the Mac's display off/on over SSH (software equivalent of replugging the cable).
+LOCK=/tmp/toggle-input.lock
+exec 9>"$LOCK"
+if [ -n "$1" ]; then flock -w 20 9 || exit 1   # explicit target (from Deskflow hook): wait our turn
+else flock -n 9 || exit 0; fi           # manual toggle: ignore key-repeat
+
+case "$1" in
+  native) target=$NATIVE ;;
+  hdmi)   target=$HDMI ;;
+  *) cur=$(ddcutil --bus $BUS --brief getvcp 60 2>/dev/null | awk '{print $4}')
+     if [ "$cur" = "x$NATIVE" ]; then target=$HDMI; else target=$NATIVE; fi
+     sleep 0.5 ;;   # panel drops a set issued right after a read
+esac
+
+ddcutil --bus $BUS --noverify setvcp 60 0x$target >/dev/null 2>&1
+
+if [ "$target" = "$HDMI" ]; then
+  sleep 1
+  timeout 12 ssh -o BatchMode=yes -o ConnectTimeout=3 $MAC \
+    'pmset displaysleepnow; sleep 3; caffeinate -u -t 2' >/dev/null 2>&1
+  sleep 2
+else
+  sleep 10
+fi

@@ -1,0 +1,7 @@
+#!/bin/sh
+# Called by Deskflow client hooks: tell the Linux box to switch the panel input.
+# $1 = hdmi (Mac gained control) | native (Mac lost control)
+LINUX=linux-host.local      # CONFIG: Linux machine's mDNS name
+LINUX_USER=linux-user       # CONFIG: Linux username
+nohup /usr/bin/ssh -n -i "$HOME/.ssh/id_deskflow_toggle" -o BatchMode=yes -o ConnectTimeout=4 \
+  -o StrictHostKeyChecking=accept-new "$LINUX_USER@$LINUX" "$1" >/dev/null 2>&1 &

@@ -1,0 +1,3 @@
+# Append ONE line like this to ~/.ssh/authorized_keys on Linux (all on one line).
+# The forced command means the Mac's key can only run `native` or `hdmi` - no shell.
+command="/home/LINUX-USER/.local/bin/toggle-input-remote",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-ed25519 AAAA...MAC-PUBLIC-KEY... mac-deskflow-toggle
