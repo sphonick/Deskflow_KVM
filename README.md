@@ -126,6 +126,7 @@ Keep a spare keyboard/mouse on the Mac. If you ever get stuck there, quitting De
 - **To debug,** set `[log] level=Debug`, `toFile=true`, `file=<path>` on both sides, then read both logs.
 
 **macOS**
+- **After a reboot, nothing switches until someone logs in on the Mac.** The LaunchAgent only starts Deskflow after login, so a Mac sitting at the login window never connects. Log in with the spare keyboard (use the screen-only shortcut to see the Mac), or enable **System Settings → Users & Groups → Automatically log in as…**. That isn't available with FileVault on, and is only sensible on a non-personal machine.
 - **Keyboard and mouse don't work on the Mac** until Deskflow has Accessibility permission *and* is restarted.
 - **The Mac's Deskflow screen name comes from its hostname** (e.g. `Mac-mini.localdomain`), not the friendly computer name. A mismatch shows up as an extra "unrecognized" computer on the server.
 - **`/usr/bin/python3` on a Mac without Command Line Tools pops an installer dialog.** Use shell or `sed -i ""` instead.
