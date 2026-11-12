@@ -46,6 +46,19 @@ The screen-switch hooks run on the **Mac**, because the Linux Deskflow runs as a
 | `mac/Deskflow.conf.example` | keys for `~/Library/Deskflow/Deskflow.conf` | Client settings and enter/exit hooks |
 | `mac/local.deskflow.autostart.plist` | `~/Library/LaunchAgents/` | Start Deskflow at login |
 
+### Reference setup (the original install)
+
+| Setting | Value |
+|---|---|
+| Linux hostname / Deskflow screen name | `jello-HP-ENVY-Curved-All-in-One-PC-34-b0xx` (`.local` via avahi) |
+| Linux IP / user | `192.168.1.5` (Wi-Fi) / `jello` |
+| Mac mDNS name | `Stacys-Mac-Mini.local` |
+| Mac Deskflow screen name | `Mac-mini.localdomain` |
+| Mac IP / user | `192.168.1.200` (DHCP reservation) / `jello` |
+| Panel DDC | bus `4`, native `0x03`, HDMI-1 `0x11` |
+| Deskflow grid | Linux slot 7, Mac slot 9 (gap between them, so no edge links) |
+| Versions | Deskflow 1.27.0, Linux Mint 22.3, macOS 27.2 |
+
 Placeholders to replace: `mac-mini.local`, `linux-host.local`, `linux-user`, `LINUX-USER`, `MAC-USER`, `LINUX-SCREEN-NAME`, `MAC-SCREEN-NAME`, and the DDC values at the top of `toggle-input`.
 
 ## Setup
