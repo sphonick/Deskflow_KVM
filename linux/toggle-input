@@ -7,7 +7,7 @@
 BUS=4                      # I2C bus of the panel
 NATIVE=03                  # VCP 0x60 value for the Linux/native input
 HDMI=11                    # VCP 0x60 value for the HDMI input the Mac uses
-MAC=mac-mini.local         # Mac's mDNS name (SSH key login from Linux must work)
+MAC=mac-mini.local         # Mac mDNS name, or its reserved IP if mDNS is flaky (SSH key login must work)
 # ---------------------------------------------------------------------------------------------
 #
 # NOTES (learned the hard way on an HP Envy 34 AIO):
@@ -28,13 +28,31 @@ case "$1" in
      sleep 0.5 ;;   # panel drops a set issued right after a read
 esac
 
+# While the Mac has the panel, keep Linux "active": Deskflow-forwarded input doesn't
+# reset the X idle timer, so Cinnamon's lock screen would kick in after idle-delay,
+# grab the keyboard away from Deskflow and freeze the Mac's input (and wedge the switch back).
+AWAKE_PID=/tmp/toggle-input.awake.pid
+stop_awake() {
+  local p; p=$(cat "$AWAKE_PID" 2>/dev/null) || return 0
+  grep -qa toggle-input-keepawake /proc/$p/cmdline 2>/dev/null && kill "$p" 2>/dev/null
+  rm -f "$AWAKE_PID"
+}
+start_awake() {
+  stop_awake
+  setsid bash -c 'while :; do DISPLAY=:0 XAUTHORITY="$HOME/.Xauthority" xset s reset; sleep 60; done' \
+    toggle-input-keepawake </dev/null >/dev/null 2>&1 9>&- &
+  echo $! > "$AWAKE_PID"
+}
+
 ddcutil --bus $BUS --noverify setvcp 60 0x$target >/dev/null 2>&1
 
 if [ "$target" = "$HDMI" ]; then
+  start_awake
   sleep 1
   timeout 12 ssh -o BatchMode=yes -o ConnectTimeout=3 $MAC \
     'pmset displaysleepnow; sleep 3; caffeinate -u -t 2' >/dev/null 2>&1
   sleep 2
 else
+  stop_awake
   sleep 10
 fi

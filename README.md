@@ -83,7 +83,7 @@ Optional fallback shortcut (Cinnamon): Keyboard → Shortcuts → Custom → `~/
 - **Linux → Mac** (normal key; used to wake the Mac's display): enable Remote Login on the Mac, then run `ssh-copy-id <mac-user>@<mac>.local`. On the Mac, also run `sudo pmset -a displaysleep 0`.
 - **Mac → Linux** (restricted key): on the Mac, run `ssh-keygen -t ed25519 -N "" -C mac-deskflow-toggle -f ~/.ssh/id_deskflow_toggle`. Add its `.pub` to Linux `~/.ssh/authorized_keys` in the format shown in `linux/authorized_keys.example`. Check it from the Mac with `ssh -i ~/.ssh/id_deskflow_toggle <linux-user>@<linux>.local whoami`, which should print `denied`.
 
-Use mDNS `.local` names rather than IPs, because macOS private Wi-Fi addresses can change the Mac's IP.
+Use mDNS `.local` names or a DHCP-reserved IP, because macOS private Wi-Fi addresses can change the Mac's IP. On the reference setup, the Mac's mDNS name stopped resolving from Linux, so `toggle-input` uses the reserved IP.
 
 ### 3. Deskflow
 - **Linux:** run `flatpak install flathub org.deskflow.deskflow`. The GitHub `.deb`s target newer Ubuntu than Mint 22.
@@ -126,6 +126,7 @@ Keep a spare keyboard/mouse on the Mac. If you ever get stuck there, quitting De
 - **A changed Cinnamon shortcut can keep its old key grabbed until re-applied.** This can masquerade as Deskflow working: the screen switches but the keyboard stays put. Check the Deskflow log for `switch from "…" to "…"`.
 - **"not starting core process, no core mode set"** means `startCoreWithGui=true` before Server or Client was chosen. Choose a mode.
 - **Deskflow on Linux crashes (segfault in Qt) when the USB keyboard/mouse receiver is unplugged, replugged or resets.** `deskflow-supervise` restarts it within about 3 s, and messages go to `journalctl --user -t deskflow-supervise`. A clean Quit from the tray isn't restarted.
+- **The Linux lock screen freezes the Mac's input.** Typing on the Mac via Deskflow doesn't count as activity on Linux, so after Cinnamon's idle delay (15 min) Linux locks in the background. The lock screen grabs the keyboard from Deskflow: Mac input freezes, the hotkey stops working, and switching back can wedge the Linux desktop. `toggle-input hdmi` therefore runs a keep-awake loop (`xset s reset` every 60 s), and `toggle-input native` stops it.
 - **To debug,** set `[log] level=Debug`, `toFile=true`, `file=<path>` on both sides, then read both logs.
 
 **macOS**
