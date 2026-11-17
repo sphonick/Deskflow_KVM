@@ -42,6 +42,7 @@ The screen-switch hooks run on the **Mac**, because the Linux Deskflow runs as a
 | `linux/server-custom.conf` | `~/.var/app/org.deskflow.deskflow/config/Deskflow/` | Deskflow hotkeys and links (no edge links) |
 | `linux/deskflow-supervise` | `~/.local/bin/` | Runs Deskflow and restarts it if it crashes |
 | `linux/deskflow.desktop` | `~/.config/autostart/` | Start the Deskflow server (via the supervisor) at login |
+| `linux/90-no-vt-switch.conf` | `/etc/X11/xorg.conf.d/` (sudo) | Optional: disable Ctrl+Alt+Fn console switching |
 | `linux/authorized_keys.example` | line for `~/.ssh/authorized_keys` | Restricted key entry for the Mac |
 | `mac/deskflow-screen` | `~/bin/` | Hook: ask Linux to switch the panel |
 | `mac/Deskflow.conf.example` | keys for `~/Library/Deskflow/Deskflow.conf` | Client settings and enter/exit hooks |
@@ -127,6 +128,7 @@ Keep a spare keyboard/mouse on the Mac. If you ever get stuck there, quitting De
 - **"not starting core process, no core mode set"** means `startCoreWithGui=true` before Server or Client was chosen. Choose a mode.
 - **Deskflow on Linux crashes (segfault in Qt) when the USB keyboard/mouse receiver is unplugged, replugged or resets.** `deskflow-supervise` restarts it within about 3 s, and messages go to `journalctl --user -t deskflow-supervise`. A clean Quit from the tray isn't restarted.
 - **The Linux lock screen freezes the Mac's input.** Typing on the Mac via Deskflow doesn't count as activity on Linux, so after Cinnamon's idle delay (15 min) Linux locks in the background. The lock screen grabs the keyboard from Deskflow: Mac input freezes, the hotkey stops working, and switching back can wedge the Linux desktop. `toggle-input hdmi` therefore runs a keep-awake loop (`xset s reset` every 60 s), and `toggle-input native` stops it.
+- **Ctrl+Alt+F12 instead of Ctrl+Shift+F12** switches Linux to an empty text console (a blank screen with a blinking cursor). Get back with Ctrl+Alt+F7 or `chvt 7`. To stop this happening, install `linux/90-no-vt-switch.conf` (DontVTSwitch); it takes effect at the next login.
 - **To debug,** set `[log] level=Debug`, `toFile=true`, `file=<path>` on both sides, then read both logs.
 
 **macOS**
