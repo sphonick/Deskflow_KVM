@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Run the Deskflow server and restart it if it crashes.
+# Why: Deskflow 1.27 (Flatpak, Qt 6.11) segfaults when the Logitech Bolt receiver
+# re-enumerates (unplug/replug or USB reset), which killed the Ctrl+Shift+F12 switching.
+# A clean quit (exit code 0, e.g. Quit from the tray menu) is respected and not restarted.
+# Gives up if it crashes 5 times within 2 minutes, to avoid a tight crash loop.
+restarts=()
+while true; do
+  flatpak run org.deskflow.deskflow
+  rc=$?
+  [ "$rc" -eq 0 ] && exit 0
+  now=$(date +%s)
+  restarts=($(for t in "${restarts[@]}" "$now"; do [ $((now - t)) -lt 120 ] && echo "$t"; done))
+  if [ "${#restarts[@]}" -ge 5 ]; then
+    logger -t deskflow-supervise "Deskflow crashed ${#restarts[@]} times in 2 min (rc=$rc); giving up"
+    exit 1
+  fi
+  logger -t deskflow-supervise "Deskflow exited rc=$rc; restarting in 3s"
+  sleep 3
+done

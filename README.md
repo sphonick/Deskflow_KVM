@@ -40,7 +40,8 @@ The screen-switch hooks run on the **Mac**, because the Linux Deskflow runs as a
 | `linux/toggle-input` | `~/.local/bin/` | Switch panel input; to HDMI also wakes the Mac's display |
 | `linux/toggle-input-remote` | `~/.local/bin/` | Forced command for the Mac's restricted SSH key |
 | `linux/server-custom.conf` | `~/.var/app/org.deskflow.deskflow/config/Deskflow/` | Deskflow hotkeys and links (no edge links) |
-| `linux/deskflow.desktop` | `~/.config/autostart/` | Start the Deskflow server at login |
+| `linux/deskflow-supervise` | `~/.local/bin/` | Runs Deskflow and restarts it if it crashes |
+| `linux/deskflow.desktop` | `~/.config/autostart/` | Start the Deskflow server (via the supervisor) at login |
 | `linux/authorized_keys.example` | line for `~/.ssh/authorized_keys` | Restricted key entry for the Mac |
 | `mac/deskflow-screen` | `~/bin/` | Hook: ask Linux to switch the panel |
 | `mac/Deskflow.conf.example` | keys for `~/Library/Deskflow/Deskflow.conf` | Client settings and enter/exit hooks |
@@ -95,7 +96,8 @@ cp linux/server-custom.conf $D/            # then fill in the screen names
 # in $D/Deskflow.conf, under [server]:
 #   externalConfig=true
 #   externalConfigFile=/home/<you>/.var/app/org.deskflow.deskflow/config/Deskflow/server-custom.conf
-install -m644 linux/deskflow.desktop ~/.config/autostart/
+install -m755 linux/deskflow-supervise ~/.local/bin/
+install -m644 linux/deskflow.desktop ~/.config/autostart/   # fix LINUX-USER in Exec=
 ```
 
 **Client (Mac):** choose Client, with the server set to `<linux>.local`. With Deskflow quit, set the keys from `mac/Deskflow.conf.example`. Then:
@@ -123,6 +125,7 @@ Keep a spare keyboard/mouse on the Mac. If you ever get stuck there, quitting De
 - **Adjacent computers on the grid create edge links,** so the mouse can slide onto the Mac. Without a working hotkey or screen-follow, you're locked out. Keep a gap.
 - **A changed Cinnamon shortcut can keep its old key grabbed until re-applied.** This can masquerade as Deskflow working: the screen switches but the keyboard stays put. Check the Deskflow log for `switch from "…" to "…"`.
 - **"not starting core process, no core mode set"** means `startCoreWithGui=true` before Server or Client was chosen. Choose a mode.
+- **Deskflow on Linux crashes (segfault in Qt) when the USB keyboard/mouse receiver is unplugged, replugged or resets.** `deskflow-supervise` restarts it within about 3 s, and messages go to `journalctl --user -t deskflow-supervise`. A clean Quit from the tray isn't restarted.
 - **To debug,** set `[log] level=Debug`, `toFile=true`, `file=<path>` on both sides, then read both logs.
 
 **macOS**
