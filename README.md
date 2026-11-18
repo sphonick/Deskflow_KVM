@@ -138,4 +138,6 @@ Keep a spare keyboard/mouse on the Mac. If you ever get stuck there, quitting De
 - **`/usr/bin/python3` on a Mac without Command Line Tools pops an installer dialog.** Use shell or `sed -i ""` instead.
 - **Logitech Options+ may update device firmware.** Single-host Logitech devices (e.g. K650/M650) paired to the Mac by Bluetooth are taken away from the Linux Bolt receiver. Re-pair them with Solaar (`solaar pair`, or the GUI).
 
+- **Alt+Tab stops working or Alt acts as the Windows key:** the K650 has flipped to its macOS layout, which swaps Alt and Start. Switch it back with `solaar config "K650" multiplatform Windows`.
+
 **Logitech note:** Solaar can only switch hosts on devices with Easy-Switch (HID++ feature CHANGE HOST 0x1814, e.g. MX Keys S / MX Master 3S). The K650/M650 are single-host, which is why this setup uses Deskflow.
