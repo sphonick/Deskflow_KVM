@@ -81,7 +81,7 @@ Test with `toggle-input hdmi`, then `toggle-input native`. Press keys **once**: 
 Optional fallback shortcut (Cinnamon): Keyboard → Shortcuts → Custom → `~/.local/bin/toggle-input` on Super+F11.
 
 ### 2. SSH both ways
-- **Linux → Mac** (normal key; used to wake the Mac's display): enable Remote Login on the Mac, then run `ssh-copy-id <mac-user>@<mac>.local`. On the Mac, also run `sudo pmset -a displaysleep 0`.
+- **Linux → Mac** (normal key; used to wake the Mac's display): enable Remote Login on the Mac, then run `ssh-copy-id <mac-user>@<mac>.local`. On the Mac, also run `sudo pmset -a displaysleep 0 sleep 0`. If the Mac goes into system sleep, it drops off Deskflow and the hotkey logs "not enough computers to toggle".
 - **Mac → Linux** (restricted key): on the Mac, run `ssh-keygen -t ed25519 -N "" -C mac-deskflow-toggle -f ~/.ssh/id_deskflow_toggle`. Add its `.pub` to Linux `~/.ssh/authorized_keys` in the format shown in `linux/authorized_keys.example`. Check it from the Mac with `ssh -i ~/.ssh/id_deskflow_toggle <linux-user>@<linux>.local whoami`, which should print `denied`.
 
 Use mDNS `.local` names or a DHCP-reserved IP, because macOS private Wi-Fi addresses can change the Mac's IP. On the reference setup, the Mac's mDNS name stopped resolving from Linux, so `toggle-input` uses the reserved IP.
